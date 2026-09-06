@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { addDays, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -20,6 +20,10 @@ const LEGEND_DOT: Record<(typeof LEGEND)[number], string> = {
 export function CalendarPage() {
   const [start, setStart] = useState(() => addDays(TODAY, -3));
   const [selected, setSelected] = useState<Reservation | null>(null);
+
+  const handleSelect = useCallback((reservation: Reservation) => {
+    setSelected(reservation);
+  }, []);
 
   const rangeLabel = useMemo(() => {
     const end = addDays(start, VISIBLE_DAYS - 1);
@@ -72,7 +76,7 @@ export function CalendarPage() {
         ))}
       </ul>
 
-      <Timeline start={start} onSelect={setSelected} />
+      <Timeline start={start} onSelect={handleSelect} />
       <p className="text-xs text-muted-foreground">
         Clique numa barra para ver hóspede, período e valor. Canceladas aparecem mais discretas.
       </p>

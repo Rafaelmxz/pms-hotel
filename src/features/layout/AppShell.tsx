@@ -43,7 +43,7 @@ export function AppShell({
                 {HOTEL_NAME}
               </span>
               <span className="hidden text-xs tracking-wide text-muted-foreground uppercase sm:block">
-                Gestão hoteleira · v1.2
+                Gestão hoteleira · v1.3
               </span>
             </span>
           </button>
