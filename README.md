@@ -1,4 +1,4 @@
-# PMS Hotel Aurora — versão 1.0
+# PMS Hotel Aurora — versão 1.1
 
 Protótipo frontend de **sistema de gestão hoteleira (PMS)** para avaliação de interface.
 
@@ -8,10 +8,10 @@ Protótipo frontend de **sistema de gestão hoteleira (PMS)** para avaliação d
   - Cards: quartos ocupados/livres, check-ins/check-outs do dia, receita prevista e recebida do mês  
   - Gráfico anual (Recharts ComposedChart): receita (barras) + taxa de ocupação (linha)
 
-- **Calendário Timeline (`/calendario`)**  
-  - Mapa de hospedagem (21 dias × 10 quartos)  
-  - Barras por status: pendente, confirmada, check-in, cancelada  
-  - Sidebar fixa com número e tipo do quarto  
+- **Mapa de Reservas (`/calendario`)**  
+  - Grade 21 dias, quartos agrupados por categoria (Standard, Luxo, Suíte)  
+  - Barras contínuas com nome do hóspede e cor por status  
+  - Sidebar fixa + cabeçalhos de categoria  
   - Drawer de detalhes da reserva ao clicar
 
 ## Stack
@@ -43,7 +43,8 @@ npm run preview
 
 ## Versão
 
-**1.0.0** — backup da interface de demonstração (Dashboard + Calendário).
+**1.1.0** — Mapa de Reservas agrupado por categoria (Fase 1).  
+**1.0.0** — baseline (Dashboard + timeline plana).
 
 ## Licença
 
