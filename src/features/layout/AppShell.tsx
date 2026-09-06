@@ -9,7 +9,7 @@ export type PageId = "painel" | "calendario";
 
 const NAV: { id: PageId; label: string }[] = [
   { id: "painel", label: "Painel" },
-  { id: "calendario", label: "Calendário" },
+  { id: "calendario", label: "Mapa de Reservas" },
 ];
 
 function formatToday(date: Date) {
@@ -43,7 +43,7 @@ export function AppShell({
                 {HOTEL_NAME}
               </span>
               <span className="hidden text-xs tracking-wide text-muted-foreground uppercase sm:block">
-                Gestão hoteleira · v1.0
+                Gestão hoteleira · v1.1
               </span>
             </span>
           </button>

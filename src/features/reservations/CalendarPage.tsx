@@ -33,10 +33,10 @@ export function CalendarPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            Mapa de hospedagem
+            Operação
           </p>
           <h1 className="font-display mt-1 text-3xl font-medium tracking-tight sm:text-4xl">
-            Calendário
+            Mapa de Reservas
           </h1>
           <p className="mt-2 text-sm text-muted-foreground capitalize">{rangeLabel}</p>
         </div>
