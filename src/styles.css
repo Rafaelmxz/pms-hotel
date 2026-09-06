@@ -88,7 +88,8 @@
   --timeline-day: 4.5rem;
   --timeline-head: 3.5rem;
   --timeline-row: 3.5rem;
-  --timeline-max-h: min(40rem, calc(100dvh - 14rem));
+  --timeline-group: 1.85rem;
+  --timeline-max-h: min(42rem, calc(100dvh - 14rem));
 }
 
 @media (max-width: 640px) {
