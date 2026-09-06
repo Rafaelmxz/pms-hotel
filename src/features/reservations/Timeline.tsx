@@ -1,3 +1,4 @@
+import { memo, useMemo } from "react";
 import { addDays, format, isSameDay, isWeekend } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -32,6 +33,11 @@ function buildRows(): MapRow[] {
   return rows;
 }
 
+const MAP_ROWS = buildRows();
+const ROW_TRACKS = MAP_ROWS.map((row) =>
+  row.kind === "group" ? "var(--timeline-group)" : "var(--timeline-row)",
+).join(" ");
+
 function clampIndex(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
@@ -49,24 +55,109 @@ function toKey(day: Date) {
   return format(day, "yyyy-MM-dd");
 }
 
-export function Timeline({
+const DayHeader = memo(function DayHeader({
+  day,
+  index,
+}: {
+  day: Date;
+  index: number;
+}) {
+  const today = isSameDay(day, TODAY);
+  const weekend = isWeekend(day);
+  return (
+    <div
+      className={cn(
+        "sticky top-0 z-20 flex flex-col items-center justify-center border-l border-border bg-card",
+        weekend && "bg-weekend",
+        today && "bg-today",
+      )}
+      style={{ gridColumn: index + 2, gridRow: 1 }}
+    >
+      <span
+        className={cn(
+          "flex size-7 items-center justify-center rounded-full text-sm font-medium tabular-nums",
+          today && "bg-primary text-primary-foreground",
+        )}
+      >
+        {format(day, "d")}
+      </span>
+      <span
+        className={cn(
+          "mt-0.5 text-[10px] font-medium tracking-wide uppercase",
+          today ? "text-primary" : "text-muted-foreground",
+        )}
+      >
+        {today ? "hoje" : format(day, "EEE", { locale: ptBR }).replace(".", "")}
+      </span>
+    </div>
+  );
+});
+
+const ReservationBar = memo(function ReservationBar({
+  reservation,
+  start,
+  gridRow,
+  onSelect,
+}: {
+  reservation: Reservation;
+  start: Date;
+  gridRow: number;
+  onSelect: (reservation: Reservation) => void;
+}) {
+  const { colStart, colEnd, hidden } = barPlacement(reservation, start, VISIBLE_DAYS);
+  if (hidden) return null;
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(reservation)}
+      className={cn(
+        "z-10 mx-1 my-1.5 truncate rounded-md px-2 text-left text-xs font-medium shadow-sm",
+        STATUS_BAR[reservation.status],
+      )}
+      style={{
+        gridColumn: `${colStart + 2} / ${colEnd + 2}`,
+        gridRow,
+      }}
+      title={`${reservation.guestName} · ${STATUS_LABEL[reservation.status]}`}
+    >
+      <span className="block truncate">{reservation.guestName}</span>
+    </button>
+  );
+});
+
+function TimelineInner({
   start,
   onSelect,
 }: {
   start: Date;
   onSelect: (reservation: Reservation) => void;
 }) {
-  const days = Array.from({ length: VISIBLE_DAYS }, (_, i) => addDays(start, i));
-  const rangeEnd = addDays(start, VISIBLE_DAYS);
-  const items = getReservationsOverlapping(start, rangeEnd);
-  const visibleCount = items.filter((reservation) => {
-    const { hidden } = barPlacement(reservation, start, VISIBLE_DAYS);
-    return !hidden;
-  }).length;
-  const rows = buildRows();
-  const rowTracks = rows
-    .map((row) => (row.kind === "group" ? "var(--timeline-group)" : "var(--timeline-row)"))
-    .join(" ");
+  const startMs = start.getTime();
+
+  const days = useMemo(
+    () => Array.from({ length: VISIBLE_DAYS }, (_, i) => addDays(start, i)),
+    [startMs],
+  );
+
+  const items = useMemo(() => {
+    const rangeEnd = addDays(start, VISIBLE_DAYS);
+    return getReservationsOverlapping(start, rangeEnd);
+  }, [startMs]);
+
+  const itemsByRoom = useMemo(() => {
+    const map = new Map<string, Reservation[]>();
+    for (const item of items) {
+      const list = map.get(item.roomId);
+      if (list) list.push(item);
+      else map.set(item.roomId, [item]);
+    }
+    return map;
+  }, [items]);
+
+  const visibleCount = useMemo(
+    () => items.filter((reservation) => !barPlacement(reservation, start, VISIBLE_DAYS).hidden).length,
+    [items, startMs],
+  );
 
   return (
     <div className="timeline-map min-w-0 overflow-hidden rounded-xl bg-card shadow-[var(--shadow-border)]">
@@ -75,47 +166,18 @@ export function Timeline({
           className="relative grid"
           style={{
             gridTemplateColumns: `var(--timeline-sidebar) repeat(${VISIBLE_DAYS}, var(--timeline-day))`,
-            gridTemplateRows: `var(--timeline-head) ${rowTracks}`,
+            gridTemplateRows: `var(--timeline-head) ${ROW_TRACKS}`,
             width: `calc(var(--timeline-sidebar) + ${VISIBLE_DAYS} * var(--timeline-day))`,
           }}
         >
           <div className="sticky top-0 left-0 z-30 flex items-end bg-card px-3 py-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
             Acomodação
           </div>
-          {days.map((day, index) => {
-            const today = isSameDay(day, TODAY);
-            const weekend = isWeekend(day);
-            return (
-              <div
-                key={toKey(day)}
-                className={cn(
-                  "sticky top-0 z-20 flex flex-col items-center justify-center border-l border-border bg-card",
-                  weekend && "bg-weekend",
-                  today && "bg-today",
-                )}
-                style={{ gridColumn: index + 2, gridRow: 1 }}
-              >
-                <span
-                  className={cn(
-                    "flex size-7 items-center justify-center rounded-full text-sm font-medium tabular-nums",
-                    today && "bg-primary text-primary-foreground",
-                  )}
-                >
-                  {format(day, "d")}
-                </span>
-                <span
-                  className={cn(
-                    "mt-0.5 text-[10px] font-medium tracking-wide uppercase",
-                    today ? "text-primary" : "text-muted-foreground",
-                  )}
-                >
-                  {today ? "hoje" : format(day, "EEE", { locale: ptBR }).replace(".", "")}
-                </span>
-              </div>
-            );
-          })}
+          {days.map((day, index) => (
+            <DayHeader key={toKey(day)} day={day} index={index} />
+          ))}
 
-          {rows.map((row, rowIndex) => {
+          {MAP_ROWS.map((row, rowIndex) => {
             const gridRow = rowIndex + 2;
             if (row.kind === "group") {
               return (
@@ -137,7 +199,7 @@ export function Timeline({
               );
             }
 
-            const roomItems = items.filter((item) => item.roomId === row.room.id);
+            const roomItems = itemsByRoom.get(row.room.id) ?? [];
             return (
               <div key={row.room.id} className="contents">
                 <div
@@ -162,32 +224,15 @@ export function Timeline({
                     }}
                   />
                 ))}
-                {roomItems.map((reservation) => {
-                  const { colStart, colEnd, hidden } = barPlacement(
-                    reservation,
-                    start,
-                    VISIBLE_DAYS,
-                  );
-                  if (hidden) return null;
-                  return (
-                    <button
-                      key={reservation.id}
-                      type="button"
-                      onClick={() => onSelect(reservation)}
-                      className={cn(
-                        "z-10 mx-1 my-1.5 truncate rounded-md px-2 text-left text-xs font-medium shadow-sm",
-                        STATUS_BAR[reservation.status],
-                      )}
-                      style={{
-                        gridColumn: `${colStart + 2} / ${colEnd + 2}`,
-                        gridRow,
-                      }}
-                      title={`${reservation.guestName} · ${STATUS_LABEL[reservation.status]}`}
-                    >
-                      <span className="block truncate">{reservation.guestName}</span>
-                    </button>
-                  );
-                })}
+                {roomItems.map((reservation) => (
+                  <ReservationBar
+                    key={reservation.id}
+                    reservation={reservation}
+                    start={start}
+                    gridRow={gridRow}
+                    onSelect={onSelect}
+                  />
+                ))}
               </div>
             );
           })}
@@ -202,4 +247,5 @@ export function Timeline({
   );
 }
 
+export const Timeline = memo(TimelineInner);
 export { VISIBLE_DAYS };
