@@ -73,6 +73,9 @@ export function CalendarPage() {
       </ul>
 
       <Timeline start={start} onSelect={setSelected} />
+      <p className="text-xs text-muted-foreground">
+        Clique numa barra para ver hóspede, período e valor. Canceladas aparecem mais discretas.
+      </p>
       <ReservationDrawer
         reservation={selected}
         onOpenChange={(open) => {

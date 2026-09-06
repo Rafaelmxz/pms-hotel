@@ -84,20 +84,20 @@
 }
 
 .timeline-map {
-  --timeline-sidebar: 9.75rem;
+  --timeline-sidebar: 5.5rem;
   --timeline-day: 4.5rem;
-  --timeline-head: 3.5rem;
-  --timeline-row: 3.5rem;
-  --timeline-group: 1.85rem;
+  --timeline-head: 3.75rem;
+  --timeline-row: 3.15rem;
+  --timeline-group: 1.7rem;
   --timeline-max-h: min(42rem, calc(100dvh - 14rem));
 }
 
 @media (max-width: 640px) {
   .timeline-map {
-    --timeline-sidebar: 4.65rem;
+    --timeline-sidebar: 3.5rem;
     --timeline-day: 3.15rem;
-    --timeline-head: 3.25rem;
-    --timeline-row: 3.25rem;
+    --timeline-head: 3.4rem;
+    --timeline-row: 2.9rem;
   }
 }
 
