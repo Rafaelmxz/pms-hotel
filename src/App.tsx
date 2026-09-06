@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppShell, type PageId } from "@/features/layout/AppShell";
 import { DashboardPage } from "@/features/dashboard/DashboardPage";
 import { CalendarPage } from "@/features/reservations/CalendarPage";
@@ -8,7 +9,9 @@ export default function App() {
 
   return (
     <AppShell page={page} onNavigate={setPage}>
-      {page === "painel" ? <DashboardPage /> : <CalendarPage />}
+      <ErrorBoundary>
+        {page === "painel" ? <DashboardPage /> : <CalendarPage />}
+      </ErrorBoundary>
     </AppShell>
   );
 }

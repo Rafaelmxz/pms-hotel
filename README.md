@@ -1,4 +1,4 @@
-# PMS Hotel Aurora — versão 1.2
+# PMS Hotel Aurora — versão 1.3
 
 Protótipo frontend de **sistema de gestão hoteleira (PMS)** para avaliação de interface.
 
@@ -43,6 +43,7 @@ npm run preview
 
 ## Versão
 
+**1.3.0** — memo na grade do Mapa + Error Boundary (Fase 4).  
 **1.2.0** — Painel alinhado ao Mapa (grupos Hoje / Receita).  
 **1.1.1** — polish do Mapa (hoje, canceladas, empty state).  
 **1.1.0** — Mapa de Reservas agrupado por categoria (Fase 1).  
