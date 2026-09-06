@@ -22,5 +22,5 @@ export const STATUS_BAR: Record<ReservationStatus, string> = {
   confirmada: "bg-status-confirmed text-status-confirmed-fg",
   "check-in": "bg-status-checkin text-status-checkin-fg",
   cancelada:
-    "bg-muted text-muted-foreground line-through ring-1 ring-inset ring-border",
+    "bg-transparent text-muted-foreground/70 line-through ring-1 ring-inset ring-border opacity-60",
 };

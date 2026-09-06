@@ -43,6 +43,7 @@ npm run preview
 
 ## Versão
 
+**1.1.1** — polish do Mapa (hoje, canceladas, empty state).  
 **1.1.0** — Mapa de Reservas agrupado por categoria (Fase 1).  
 **1.0.0** — baseline (Dashboard + timeline plana).
 
