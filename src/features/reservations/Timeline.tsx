@@ -59,6 +59,10 @@ export function Timeline({
   const days = Array.from({ length: VISIBLE_DAYS }, (_, i) => addDays(start, i));
   const rangeEnd = addDays(start, VISIBLE_DAYS);
   const items = getReservationsOverlapping(start, rangeEnd);
+  const visibleCount = items.filter((reservation) => {
+    const { hidden } = barPlacement(reservation, start, VISIBLE_DAYS);
+    return !hidden;
+  }).length;
   const rows = buildRows();
   const rowTracks = rows
     .map((row) => (row.kind === "group" ? "var(--timeline-group)" : "var(--timeline-row)"))
@@ -99,8 +103,13 @@ export function Timeline({
                 >
                   {format(day, "d")}
                 </span>
-                <span className="mt-0.5 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-                  {format(day, "EEE", { locale: ptBR }).replace(".", "")}
+                <span
+                  className={cn(
+                    "mt-0.5 text-[10px] font-medium tracking-wide uppercase",
+                    today ? "text-primary" : "text-muted-foreground",
+                  )}
+                >
+                  {today ? "hoje" : format(day, "EEE", { locale: ptBR }).replace(".", "")}
                 </span>
               </div>
             );
@@ -135,9 +144,8 @@ export function Timeline({
                   className="sticky left-0 z-20 flex flex-col justify-center border-t border-border bg-card px-3"
                   style={{ gridColumn: 1, gridRow }}
                 >
-                  <span className="text-sm font-medium tabular-nums">{row.room.number}</span>
-                  <span className="hidden truncate text-xs whitespace-nowrap text-muted-foreground sm:block">
-                    {row.room.type}
+                  <span className="text-sm font-medium tabular-nums whitespace-nowrap">
+                    {row.room.number}
                   </span>
                 </div>
                 {days.map((day, dayIndex) => (
@@ -184,6 +192,11 @@ export function Timeline({
             );
           })}
         </div>
+        {visibleCount === 0 ? (
+          <p className="border-t border-border bg-card px-4 py-3 text-sm text-muted-foreground">
+            Nenhuma reserva neste período. Use Hoje ou avance as semanas.
+          </p>
+        ) : null}
       </div>
     </div>
   );
