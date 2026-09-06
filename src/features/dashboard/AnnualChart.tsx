@@ -75,8 +75,7 @@ export function AnnualChart() {
       <CardHeader>
         <CardTitle>Desempenho anual · {CURRENT_YEAR}</CardTitle>
         <CardDescription>
-          Receita financeira (barras) e taxa de ocupação (linha), calculadas a partir das reservas
-          do hotel.
+          Barras: receita financeira. Linha: taxa de ocupação.
         </CardDescription>
       </CardHeader>
       <CardContent>
