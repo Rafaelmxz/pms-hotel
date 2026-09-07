@@ -4,6 +4,13 @@ import { ptBR } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TODAY, type Reservation } from "@/mocks/hotelData";
+import {
+  HOUSEKEEPING_DOT,
+  HOUSEKEEPING_LABEL,
+  HOUSEKEEPING_ORDER,
+  type HousekeepingStatus,
+} from "@/features/rooms/housekeeping";
+import { useRooms } from "@/features/rooms/useRooms";
 import { ReservationDrawer } from "./ReservationDrawer";
 import { Timeline, VISIBLE_DAYS } from "./Timeline";
 import { STATUS_LABEL } from "./status";
@@ -20,6 +27,7 @@ const LEGEND_DOT: Record<(typeof LEGEND)[number], string> = {
 export function CalendarPage() {
   const [start, setStart] = useState(() => addDays(TODAY, -3));
   const [selected, setSelected] = useState<Reservation | null>(null);
+  const { data: rooms = [] } = useRooms();
 
   const handleSelect = useCallback((reservation: Reservation) => {
     setSelected(reservation);
@@ -67,18 +75,28 @@ export function CalendarPage() {
         </div>
       </div>
 
-      <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
-        {LEGEND.map((status) => (
-          <li key={status} className="inline-flex items-center gap-1.5">
-            <span className={`size-2.5 rounded-full ${LEGEND_DOT[status]}`} />
-            {STATUS_LABEL[status]}
-          </li>
-        ))}
-      </ul>
+      <div className="flex flex-col gap-2">
+        <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
+          {LEGEND.map((status) => (
+            <li key={status} className="inline-flex items-center gap-1.5">
+              <span className={`size-2.5 rounded-full ${LEGEND_DOT[status]}`} />
+              {STATUS_LABEL[status]}
+            </li>
+          ))}
+        </ul>
+        <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
+          {HOUSEKEEPING_ORDER.map((status: HousekeepingStatus) => (
+            <li key={status} className="inline-flex items-center gap-1.5">
+              <span className={`size-2.5 rounded-full ${HOUSEKEEPING_DOT[status]}`} />
+              {HOUSEKEEPING_LABEL[status]}
+            </li>
+          ))}
+        </ul>
+      </div>
 
-      <Timeline start={start} onSelect={handleSelect} />
+      <Timeline start={start} rooms={rooms} onSelect={handleSelect} />
       <p className="text-xs text-muted-foreground">
-        Clique numa barra para ver hóspede, período e valor. Canceladas aparecem mais discretas.
+        Clique nos três pontos ao lado do quarto para marcar Limpo, Sujo ou Em manutenção.
       </p>
       <ReservationDrawer
         reservation={selected}

@@ -78,13 +78,17 @@
     cursor: pointer;
   }
 
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+
   body {
     @apply bg-background font-sans text-foreground;
   }
 }
 
 .timeline-map {
-  --timeline-sidebar: 5.5rem;
+  --timeline-sidebar: 6.75rem;
   --timeline-day: 4.5rem;
   --timeline-head: 3.75rem;
   --timeline-row: 3.15rem;
