@@ -12,6 +12,8 @@ import {
   type RoomType,
 } from "@/mocks/hotelData";
 import { cn } from "@/lib/utils";
+import { HousekeepingMenu } from "@/features/rooms/HousekeepingMenu";
+import type { RoomState } from "@/features/rooms/roomStore";
 import { STATUS_BAR, STATUS_LABEL } from "./status";
 
 const VISIBLE_DAYS = 21;
@@ -127,11 +129,18 @@ const ReservationBar = memo(function ReservationBar({
 
 function TimelineInner({
   start,
+  rooms: liveRooms,
   onSelect,
 }: {
   start: Date;
+  rooms: RoomState[];
   onSelect: (reservation: Reservation) => void;
 }) {
+  const roomById = useMemo(() => {
+    const map = new Map(liveRooms.map((room) => [room.id, room]));
+    return map;
+  }, [liveRooms]);
+
   const startMs = start.getTime();
 
   const days = useMemo(
@@ -203,12 +212,13 @@ function TimelineInner({
             return (
               <div key={row.room.id} className="contents">
                 <div
-                  className="sticky left-0 z-20 flex flex-col justify-center border-t border-border bg-card px-3"
+                  className="sticky left-0 z-20 flex items-center justify-between gap-1 overflow-visible border-t border-border bg-card px-2"
                   style={{ gridColumn: 1, gridRow }}
                 >
                   <span className="text-sm font-medium tabular-nums whitespace-nowrap">
                     {row.room.number}
                   </span>
+                  <HousekeepingMenu room={roomById.get(row.room.id) ?? { ...row.room, housekeepingStatus: "limpo" }} />
                 </div>
                 {days.map((day, dayIndex) => (
                   <div
